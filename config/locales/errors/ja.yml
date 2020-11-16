@@ -1,0 +1,4 @@
+ja:
+  errors:
+    messages:
+      invalid_file_type: は不正なファイル形式です
