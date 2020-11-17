@@ -1,8 +1,16 @@
 <p id="notice"><%= notice %></p>
 
-<% if @post.image.attached? %>
+<% if @post.main_image.attached? %>
   <p>
-    <%= image_tag @post.image, width: '50%' %>
+    <%= image_tag @post.main_image, width: '50%' %>
+  </p>
+<% end %>
+
+<% if @post.other_images.attached? %>
+  <p>
+    <% @post.other_images.each do |other_image| %>
+      <%= image_tag other_image, width: '10%' %>
+    <% end %>
   </p>
 <% end %>
 

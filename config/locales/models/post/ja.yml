@@ -7,6 +7,7 @@ ja:
       post:
         title: タイトル
         description: 説明
-        image: 画像
+        main_image: メイン画像
+        other_images: その他画像
         created_at: 作成日
         updated_at: 更新日
