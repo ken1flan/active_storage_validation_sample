@@ -2,3 +2,5 @@ ja:
   errors:
     messages:
       invalid_file_type: は不正なファイル形式です
+      too_many_files: は%{count}個以内で入力してください
+      too_few_files: は%{count}個以上で入力してください
