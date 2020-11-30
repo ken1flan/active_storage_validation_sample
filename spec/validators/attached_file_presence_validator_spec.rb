@@ -1,38 +1,59 @@
 require 'rails_helper'
 
 RSpec.describe AttachedFilePresenceValidator, type: :validator do
-  subject { clazz.new(attached_file) }
+  describe 'has_one_attached' do
+    let(:obj) { clazz.new }
+    let(:clazz) do
+      c = Class.new(ActiveRecord::Base) do
+        self.table_name = :posts
 
-  let(:clazz) do
-    c = Class.new do
-      include ActiveModel::Model
+        has_one_attached :main_image
 
-      attr_reader :attached_file
-
-      validates :attached_file, attached_file_presence: true
-
-      def initialize(attached_file)
-        @attached_file = attached_file
+        validates :main_image, attached_file_presence: true
       end
+      stub_const('TestClass', c)
     end
-    stub_const('AttachedFilePresenceValidatorTestClass', c)
+
+    context 'without main_image' do
+      let(:is_attached) { false }
+
+      it { expect(obj).to be_invalid }
+    end
+
+    context 'with main_image' do
+      let(:is_attached) { true }
+
+      before { obj.main_image.attach(io: File.open(Rails.root.join('spec/fixtures/file_presence/file.dat')), filename: 'file.dat') }
+
+      it { expect(obj).to be_valid }
+    end
   end
 
-  let(:attached_file) do
-    attached_file = instance_double('attached_file mock')
-    allow(attached_file).to receive(:attached?).and_return(is_attached)
-    attached_file
-  end
+  describe 'has_many_attached' do
+    let(:obj) { clazz.new }
+    let(:clazz) do
+      c = Class.new(ActiveRecord::Base) do
+        self.table_name = :posts
+      end
+      stub_const('TestClass', c)
 
-  context 'when attached? return false' do
-    let(:is_attached) { false }
+      TestClass.has_many_attached :main_images
+      TestClass.validates :main_images, attached_file_presence: true
+      TestClass
+    end
 
-    it { is_expected.to be_invalid }
-  end
+    context 'without main_image' do
+      let(:is_attached) { false }
 
-  context 'when attached? return true' do
-    let(:is_attached) { true }
+      it { expect(obj).to be_invalid }
+    end
 
-    it { is_expected.to be_valid }
+    context 'with main_images' do
+      let(:is_attached) { true }
+
+      before { obj.main_images.attach(io: File.open(Rails.root.join('spec/fixtures/file_presence/file.dat')), filename: 'file.dat') }
+
+      it { expect(obj).to be_valid }
+    end
   end
 end
